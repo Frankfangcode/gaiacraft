@@ -81,7 +81,8 @@ section{padding:88px 0}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px;background:rgba(255,255,255,.06);border:2px dashed rgba(255,246,227,.4);border-radius:24px;padding:24px}
 .form label{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:15px}
 .form .full{grid-column:1/-1}
-.form input,.form select,.form textarea{font:inherit;padding:12px 14px;border-radius:12px;border:2px solid var(--cream);background:var(--cream);color:var(--navy)}
+.form label{min-width:0}
+.form input,.form select,.form textarea{width:100%;min-width:0;font:inherit;padding:12px 14px;border-radius:12px;border:2px solid var(--cream);background:var(--cream);color:var(--navy)}
 .form textarea{min-height:110px;resize:vertical}
 .form .note{font-size:13px;opacity:.8}
 .form-msg{grid-column:1/-1;font-weight:900;color:#F2C16B;min-height:1.5em}
@@ -121,7 +122,7 @@ section{padding:88px 0}
 .timeline div:last-child{border-right:0;background:var(--coral-bg);color:#fff}
 .timeline b{display:block;font-size:16px}
 
-footer{padding:48px 0;text-align:center;font-size:14px;color:var(--ink-soft)}
+footer{padding:48px 16px;text-align:center;font-size:14px;color:var(--ink-soft)}
 
 @media (max-width:820px){
   section{padding:64px 0}
@@ -137,7 +138,8 @@ footer{padding:48px 0;text-align:center;font-size:14px;color:var(--ink-soft)}
 }
 @media (min-width:720px){.mobile-compare{display:none}}
 @media (max-width:719px){.slider{aspect-ratio:4/3;touch-action:auto}.slider .top{clip-path:inset(0 calc(100% - var(--pos,100%)) 0 0)}.slider input,.slider .handle{display:none}.mobile-compare{display:flex}}
-@media (max-width:420px){.facts{grid-template-columns:1fr}.history-card summary{grid-template-columns:1fr}.history-card summary::after{grid-column:1}.history-media{grid-template-columns:1fr}}
+@media (max-width:719px){.slider[data-view="b"] .tag.l,.slider:not([data-view="b"]) .tag.r{display:none}}
+@media (max-width:420px){.facts{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.fact{padding:10px 12px;font-size:14px;line-height:1.45}.history-card summary{grid-template-columns:1fr}.history-card summary::after{grid-column:1}.history-media{grid-template-columns:1fr}.history-line{padding-left:10px;margin-left:2px}.history-card summary{padding:12px}.history-body{padding:0 14px 18px}.history-compare{padding:14px}.mobile-compare button{flex:1;white-space:nowrap;padding:8px 10px}}
 </style>
 </head>
 <body>
@@ -338,10 +340,11 @@ document.querySelectorAll('.slider').forEach(slider=>{
 document.querySelectorAll('.mobile-compare button').forEach(button=>button.addEventListener('click',()=>{
   const slider=document.getElementById(button.dataset.target);
   slider.style.setProperty('--pos',button.dataset.value+'%');
+  slider.dataset.view=button.dataset.value==='0'?'b':'a';
   button.parentElement.querySelectorAll('button').forEach(peer=>peer.setAttribute('aria-pressed',peer===button?'true':'false'));
 }));
 const mobileCompare=window.matchMedia('(max-width:719px)');
-function syncCompareMode(){document.querySelectorAll('.slider').forEach(slider=>slider.style.setProperty('--pos',mobileCompare.matches?'100%':slider.querySelector('input').value+'%'))}
+function syncCompareMode(){document.querySelectorAll('.slider').forEach(slider=>{slider.style.setProperty('--pos',mobileCompare.matches?'100%':slider.querySelector('input').value+'%');slider.dataset.view='a'});document.querySelectorAll('.mobile-compare button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.value==='100'?'true':'false'))}
 mobileCompare.addEventListener('change',syncCompareMode);syncCompareMode();
 
 // 只有使用者點擊封面時才建立 YouTube iframe。
